@@ -1,11 +1,18 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import Pages from 'vite-plugin-pages'
 import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 /*vite build --mode productionでビルドする*/
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [
+        vue(),
+        Pages({
+            dirs: 'src/pages', // デフォルトのページディレクトリを指定
+            extensions: ['vue'], // 対応するファイル拡張子を指定
+        }),
+    ],
     base: './',
     resolve: {
         alias: {

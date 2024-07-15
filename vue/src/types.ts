@@ -23,3 +23,15 @@ export interface Post {
     featured_media?: number | string
     link?: string
 }
+
+export interface Category {
+    id: number
+    count: number
+    description: string
+    link: string
+    meta: string[]
+    name: string
+    parent: number
+    slug: string
+    taxonomy: string
+}
