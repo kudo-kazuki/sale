@@ -33,6 +33,8 @@ onMounted(async () => {
 .Page {
     h1 {
         font-size: 86px;
+        margin: 10px;
+        display: flex;
     }
 }
 </style>
