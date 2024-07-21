@@ -1,11 +1,30 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Search from '@/components/Search.vue'
+</script>
 
 <template>
-    <header>
-        <nav>
-            <router-link to="/">Home</router-link>
-        </nav>
+    <header class="Header">
+        <div class="Header__wrap">
+            <nav class="Header__logo">
+                <router-link to="/">Home</router-link>
+            </nav>
+            <Search />
+        </div>
     </header>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.Header {
+    &__wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+    }
+
+    &__logo {
+        font-size: 24px;
+        font-weight: bold;
+    }
+}
+</style>
