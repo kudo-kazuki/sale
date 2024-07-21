@@ -1,37 +1,34 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
-import axiosInstance from '@/axiosConfig'
 import { useRoute } from 'vue-router'
+import { fetchPosts } from '@/utils/fetchPosts'
 import { Post } from '@/types'
 
 const route = useRoute()
 const posts = ref<Array<Post>>([])
-const searchWord = route.query.q as string
-console.log('searchWord', searchWord)
+const searchWord = (route.query.q as string) || ''
 
-const fetchPosts = async (searchWord: string) => {
-    try {
-        const response = await axiosInstance.get<Post[]>(
-            `posts?search=${searchWord}`,
-        )
-        posts.value = response.data
-        console.log(posts.value)
-    } catch (error) {
-        console.error('Error fetching WordPress posts:', error)
+const fetchAndSetPosts = async () => {
+    const options = {
+        searchWord: route.query.q as string,
+        perPage: 5,
     }
+    posts.value = await fetchPosts(options)
+
+    console.log('searchWord', searchWord)
+    console.log('posts', posts.value)
 }
 
 // 初回の検索を実行
-onMounted(async () => {
-    fetchPosts(searchWord)
-})
+onMounted(fetchAndSetPosts)
 
 // クエリパラメータの変更を監視して再検索を実行
 watch(
     () => route.query.q,
     (newQuery) => {
+        console.log('newQuery', newQuery)
         if (newQuery) {
-            fetchPosts(newQuery as string)
+            fetchAndSetPosts()
         }
     },
 )
