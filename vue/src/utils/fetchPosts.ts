@@ -4,6 +4,7 @@ import { Post } from '@/types'
 interface FetchPostsOptions {
     searchWord?: string
     perPage?: number
+    page?: number
     order?: 'asc' | 'desc'
     orderBy?: string
     categories?: number[]
@@ -13,12 +14,14 @@ export const fetchPosts = async (
     options: FetchPostsOptions = {},
 ): Promise<Post[]> => {
     try {
-        const { searchWord, perPage, order, orderBy, categories } = options
+        const { searchWord, perPage, order, orderBy, categories, page } =
+            options
         let url = 'posts'
 
         const params = new URLSearchParams()
         if (searchWord) params.append('search', searchWord)
         if (perPage) params.append('per_page', perPage.toString())
+        if (page) params.append('page', page.toString())
         if (order) params.append('order', order)
         if (orderBy) params.append('orderby', orderBy)
         if (categories && categories.length > 0) {

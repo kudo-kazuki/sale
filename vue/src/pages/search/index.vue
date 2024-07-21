@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchPosts } from '@/utils/fetchPosts'
+import { formatDate } from '@/utils/dateFormatter'
 import { Post } from '@/types'
 
 const route = useRoute()
@@ -20,13 +21,14 @@ const fetchAndSetPosts = async () => {
 }
 
 // 初回の検索を実行
-onMounted(fetchAndSetPosts)
+onMounted(() => {
+    fetchAndSetPosts().catch((error) => console.error(error))
+})
 
 // クエリパラメータの変更を監視して再検索を実行
 watch(
     () => route.query.q,
     (newQuery) => {
-        console.log('newQuery', newQuery)
         if (newQuery) {
             fetchAndSetPosts()
         }
@@ -36,15 +38,24 @@ watch(
 
 <template>
     <div class="Page">
-        <h1>search</h1>
+        <h1>検索結果</h1>
         <ul>
             <li v-for="post in posts" :key="post.id">
-                <router-link :to="`/detail/${post.id}`">{{
-                    post.title.rendered
-                }}</router-link>
+                <router-link :to="`/detail/${post.id}`"
+                    >{{ post.title.rendered }}
+                    <time><br />投稿日: {{ formatDate(post.date) }}</time>
+                    <img
+                        v-if="post.featured_media_details"
+                        :src="post.featured_media_details.source_url"
+                        alt=""
+                /></router-link>
             </li>
         </ul>
     </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+h1 {
+    color: $primary-color; // これは variables.scss の変数を使っています
+}
+</style>

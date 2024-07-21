@@ -28,4 +28,15 @@ export default defineConfig({
             },
         },
     },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                // vueファイル内でも普通に使えるようになる
+                additionalData: `
+                    @import "@/scss/variables.scss";
+                    @import "@/scss/mixins.scss";
+                `,
+            },
+        },
+    },
 })

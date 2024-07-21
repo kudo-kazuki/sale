@@ -1,0 +1,47 @@
+@import 'variables';
+@import 'mixins';
+@import url('https://fonts.googleapis.com/earlyaccess/notosansjapanese.css');
+
+body {
+    font-size: 16px;
+    line-height: 1.7;
+    font-family: 'Noto Sans Japanese', 'メイリオ', Meiryo, 'ヒラギノ角ゴ Pro W3',
+        'Hiragino Kaku Gothic Pro', sans-serif;
+}
+
+input,
+button,
+textarea,
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    background-color: transparent;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='password'],
+input[type='email'],
+input[type='url'],
+input[type='tel'],
+input[type='search'],
+input[type='date'],
+input[type='datetime-local'],
+input[type='month'],
+input[type='week'],
+input[type='time'],
+input[type='color'],
+textarea,
+select {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    outline: none;
+    font-family: inherit;
+
+    &:focus {
+        border-color: #007bff;
+    }
+}
