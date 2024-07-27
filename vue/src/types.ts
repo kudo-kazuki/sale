@@ -8,6 +8,10 @@ export interface MediaDetails {
     source_url: string
 }
 
+export interface Acf {
+    recommended?: boolean
+}
+
 export interface Post {
     id: number
     date: string
@@ -29,10 +33,12 @@ export interface Post {
     type: string
     comment_status?: string
     categories?: Array<number | string>
+    tags?: Array<number | string>
     format?: string
     featured_media?: number | string
     link?: string
     featured_media_details?: MediaDetails
+    acf?: Acf
 }
 
 export interface Category {

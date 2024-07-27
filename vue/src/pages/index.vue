@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axiosInstance from '@/axiosConfig'
+import { fetchPosts } from '@/utils/fetchPosts'
 import { Post } from '@/types'
 
 const posts = ref<Array<Post>>([])
 
-onMounted(async () => {
-    try {
-        const response = await axiosInstance.get<Post[]>('posts')
-        posts.value = response.data
-        console.log(posts.value)
-    } catch (error) {
-        console.error('Error fetching WordPress posts:', error)
-    }
+const fetchAndSetPosts = async () => {
+    posts.value = await fetchPosts()
+    console.log('posts', posts.value)
+}
+
+// 初回の検索を実行
+onMounted(() => {
+    fetchAndSetPosts().catch((error) => console.error(error))
 })
 </script>
 

@@ -10,15 +10,22 @@ interface FetchPostsOptions {
     categories?: number[]
 }
 
+interface FetchPostsResult {
+    posts: Post[]
+    total: number
+}
+
 export const fetchPosts = async (
     options: FetchPostsOptions = {},
-): Promise<Post[]> => {
+): Promise<FetchPostsResult> => {
     try {
         const { searchWord, perPage, order, orderBy, categories, page } =
             options
         let url = 'posts'
 
         const params = new URLSearchParams()
+        params.append('acf_format', 'standard')
+
         if (searchWord) params.append('search', searchWord)
         if (perPage) params.append('per_page', perPage.toString())
         if (page) params.append('page', page.toString())
@@ -32,8 +39,11 @@ export const fetchPosts = async (
             url += `?${params.toString()}`
         }
 
+        console.log('url:', url)
+
         const response = await axiosInstance.get<Post[]>(url)
         const postData = response.data
+        const total = parseInt(response.headers['x-wp-total'], 10) //pageやper_pageを無視したトータル件数
 
         const postsWithMedia = await Promise.all(
             postData.map(async (post) => {
@@ -54,7 +64,7 @@ export const fetchPosts = async (
             }),
         )
 
-        return postsWithMedia
+        return { posts: postsWithMedia, total }
     } catch (error) {
         console.error('Error fetching WordPress posts:', error)
         throw error
