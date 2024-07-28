@@ -13,7 +13,7 @@ import Search from '@/components/Search.vue'
     </header>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .Header {
     &__wrap {
         display: flex;

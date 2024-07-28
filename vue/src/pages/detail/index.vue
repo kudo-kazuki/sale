@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import axiosInstance from '@/axiosConfig'
 import { Post } from '@/types'
 import { updateMeta } from '@/utils/meta'
+import { formatDate } from '@/utils/dateFormatter'
 
 const route = useRoute()
 const post = ref<Post | null>(null)
@@ -39,6 +40,7 @@ watch(
 <template>
     <article>
         <h1>{{ post ? post.title.rendered : '' }}</h1>
+        <p>投稿日: {{ post ? formatDate(post.date) : '不明' }}</p>
         <div v-if="post">
             <div v-html="post.content.rendered"></div>
         </div>

@@ -1,20 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchPosts } from '@/utils/fetchPosts'
-import { formatDate } from '@/utils/dateFormatter'
 import { Post } from '@/types'
 import Pagination from '@/components/Pagination/Pagination.vue'
+import Posts from '@/components/Posts/Posts.vue'
 
 const route = useRoute()
 const posts = ref<Array<Post>>([])
+const isLoading = ref(false)
 
 const total = ref(0)
 const currentPage = ref(1)
 const MAX_DISPLAY_PAGES = 5
-const ITEMS_PER_PAGE = 5
+const ITEMS_PER_PAGE = 10
 
 const fetchAndSetPosts = async () => {
+    if (isLoading.value) {
+        return false
+    }
+
+    isLoading.value = true
     const options = {
         searchWord: (route.query.q as string) || '',
         perPage: ITEMS_PER_PAGE,
@@ -23,6 +29,9 @@ const fetchAndSetPosts = async () => {
     const result = await fetchPosts(options)
     posts.value = result.posts
     total.value = result.total
+
+    await nextTick()
+    isLoading.value = false
 
     console.log('posts', posts.value)
     console.log('total', total.value)
@@ -52,21 +61,9 @@ const movePage = (pageNumber: number) => {
 </script>
 
 <template>
-    <div class="Page">
-        <h1>検索結果</h1>
-        <ul>
-            <li v-for="post in posts" :key="post.id">
-                <router-link :to="`/detail/${post.id}`"
-                    >{{ post.title.rendered }}
-                    <time><br />投稿日: {{ formatDate(post.date) }}</time>
-                    <img
-                        v-if="post.featured_media_details"
-                        :src="post.featured_media_details.source_url"
-                        alt=""
-                /></router-link>
-            </li>
-        </ul>
-
+    <section class="Page">
+        <h1>検索結果 {{ total }}件</h1>
+        <Posts :posts="posts" :isLoading="isLoading" />
         <Pagination
             :currentPage="currentPage"
             :maxDisplayPages="MAX_DISPLAY_PAGES"
@@ -74,11 +71,11 @@ const movePage = (pageNumber: number) => {
             :total="total"
             @onClick:pageNumber="movePage"
         />
-    </div>
+    </section>
 </template>
 
 <style lang="scss" scoped>
-h1 {
-    color: $primary-color; // これは variables.scss の変数を使っています
+.Page {
+    @include page;
 }
 </style>

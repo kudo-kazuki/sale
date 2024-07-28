@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { fetchPosts } from '@/utils/fetchPosts'
 import { Post } from '@/types'
+import Pagination from '@/components/Pagination/Pagination.vue'
+import Posts from '@/components/Posts/Posts.vue'
 
 const posts = ref<Array<Post>>([])
+const isLoading = ref(false)
 
 const fetchAndSetPosts = async () => {
-    posts.value = await fetchPosts()
-    console.log('posts', posts.value)
+    if (isLoading.value) {
+        return false
+    }
+
+    isLoading.value = true
+    const options = {
+        perPage: 50,
+    }
+    const result = await fetchPosts(options)
+    posts.value = result.posts
+
+    await nextTick()
+    isLoading.value = false
 }
 
 // 初回の検索を実行
@@ -19,22 +33,12 @@ onMounted(() => {
 <template>
     <div class="Page">
         <h1>index</h1>
-        <ul>
-            <li v-for="post in posts" :key="post.id">
-                <router-link :to="`/detail/${post.id}`">{{
-                    post.title.rendered
-                }}</router-link>
-            </li>
-        </ul>
+        <Posts :posts="posts" :isLoading="isLoading" />
     </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .Page {
-    h1 {
-        font-size: 86px;
-        margin: 10px;
-        display: flex;
-    }
+    @include page;
 }
 </style>

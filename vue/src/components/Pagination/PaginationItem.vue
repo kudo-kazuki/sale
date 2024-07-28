@@ -81,8 +81,8 @@ const props = withDefaults(defineProps<Props>(), {
     }
 
     &__icon {
-        width: 24px;
-        height: 24px;
+        width: 12px;
+        height: 12px;
     }
 }
 </style>

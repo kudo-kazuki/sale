@@ -121,11 +121,9 @@ watch(
 </script>
 
 <template>
-    <div v-if="maxPage > 1" class="Pagination">
+    <nav v-if="maxPage > 1" class="Pagination">
         <div class="Pagination__numberInfo">
-            {{ currentPage > 1 ? (currentPage - 1) * itemsPerPage + 1 : 1 }}
-            -
-            {{
+            {{ currentPage > 1 ? (currentPage - 1) * itemsPerPage + 1 : 1 }}-{{
                 currentPage < maxPage ? currentPage * itemsPerPage : total
             }}件目（合計{{ total }}件）
         </div>
@@ -183,7 +181,7 @@ watch(
                 @click="onClick(currentPage + 1)"
             />
         </div>
-    </div>
+    </nav>
 </template>
 
 <style lang="scss" scoped>
@@ -198,7 +196,7 @@ watch(
         left: 0;
         font-size: 14px;
         color: #767676;
-        transform: translate(-50%);
+        transform: translateY(-50%);
     }
 
     &__area {

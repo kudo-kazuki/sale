@@ -2,12 +2,26 @@
 @import 'mixins';
 @import url('https://fonts.googleapis.com/earlyaccess/notosansjapanese.css');
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
     font-size: 16px;
     line-height: 1.7;
     font-family: 'Noto Sans Japanese', 'メイリオ', Meiryo, 'ヒラギノ角ゴ Pro W3',
         'Hiragino Kaku Gothic Pro', sans-serif;
     color: $text-color1;
+}
+
+h1 {
+    font-size: 24px;
+
+    @media (max-width: 767px) {
+        font-size: 18px;
+    }
 }
 
 input,
