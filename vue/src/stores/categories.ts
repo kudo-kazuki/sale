@@ -9,8 +9,9 @@ export const useCategoryStore = defineStore('categoryStore', {
     actions: {
         async fetchCategories() {
             try {
-                const response =
-                    await axiosInstance.get<Category[]>('categories')
+                const response = await axiosInstance.get<Category[]>(
+                    'categories?per_page=100',
+                )
                 this.categories = response.data
                 console.log('categories', this.categories)
             } catch (error) {

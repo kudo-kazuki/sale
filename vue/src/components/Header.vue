@@ -15,6 +15,8 @@ import Search from '@/components/Search.vue'
 
 <style lang="scss" scoped>
 .Header {
+    border-bottom: 1px solid #ccc;
+
     &__wrap {
         display: flex;
         align-items: center;

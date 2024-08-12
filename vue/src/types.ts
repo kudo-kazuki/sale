@@ -52,3 +52,11 @@ export interface Category {
     slug: string
     taxonomy: string
 }
+
+export interface BreadcrumbsItem {
+    text: string
+    href?: string
+}
+export interface BreadcrumbsItemProps {
+    items: BreadcrumbsItem[]
+}
