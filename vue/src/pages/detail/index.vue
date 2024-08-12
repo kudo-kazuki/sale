@@ -8,6 +8,7 @@ import { formatDate } from '@/utils/dateFormatter'
 import { useCategoryStore } from '@/stores/categories'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Loading from '@/components/Loading.vue'
+import AddButton from '@/components/Cart/AddButton.vue'
 
 const categoryStore = useCategoryStore()
 categoryStore.fetchCategories()
@@ -99,6 +100,8 @@ watch(
             </figure>
 
             <div v-if="post" v-html="post.content.rendered"></div>
+
+            <AddButton />
         </section>
         <Loading v-if="isLoading" class="Detail__loading" />
     </article>
@@ -116,6 +119,7 @@ watch(
     &__section {
         width: $contentWidth;
         margin: 0 auto;
+        padding-bottom: 40px;
     }
 
     &__h1 {
