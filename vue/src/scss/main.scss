@@ -33,6 +33,14 @@ p + p {
     margin-top: 12px;
 }
 
+a {
+    text-decoration: underline;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
+
 input,
 button,
 textarea,

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axiosInstance from '@/axiosConfig'
+import { axiosInstance } from '@/axiosConfig'
 import { Category } from '@/types'
 
 export const useCategoryStore = defineStore('categoryStore', {

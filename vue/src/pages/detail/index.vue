@@ -11,7 +11,6 @@ import Loading from '@/components/Loading.vue'
 import AddButton from '@/components/Cart/AddButton.vue'
 
 const categoryStore = useCategoryStore()
-categoryStore.fetchCategories()
 
 const route = useRoute()
 const post = ref<Post | null>(null)
@@ -101,7 +100,16 @@ watch(
 
             <div v-if="post" v-html="post.content.rendered"></div>
 
-            <AddButton />
+            <AddButton
+                v-if="post"
+                :id="post.id"
+                :name="post.title.rendered"
+                :image="
+                    post.featured_media_details
+                        ? post.featured_media_details.source_url
+                        : null
+                "
+            />
         </section>
         <Loading v-if="isLoading" class="Detail__loading" />
     </article>
@@ -110,8 +118,6 @@ watch(
 <style lang="scss" scoped>
 .Detail {
     @include page;
-
-    $contentWidth: 1300px;
 
     height: 100%;
     overflow: auto;
@@ -156,7 +162,9 @@ watch(
         max-width: 100%;
         height: auto;
     }
+}
 
+.Detail {
     @media (max-width: ($contentWidth + 20px)) {
         &__section {
             width: 100%;

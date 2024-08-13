@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useCategoryStore } from '@/stores/categories'
+import { useSettingsStore } from '@/stores/settings'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
+import { axiosInstance2 } from '@/axiosConfig'
 
 const categoryStore = useCategoryStore()
 categoryStore.fetchCategories()
@@ -19,6 +21,13 @@ onMounted(() => {
 })
 onUnmounted(() => {
     window.removeEventListener('resize', setAppHeight)
+})
+
+//サイトタイトルの取得
+const settingsStore = useSettingsStore()
+axiosInstance2.get(`/wp-json/custom/v2/site-title`).then((response) => {
+    // 取得したサイトタイトルをstoreに設定
+    settingsStore.siteTitle = String(response.data)
 })
 </script>
 

@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useSettingsStore } from '@/stores/settings'
+const settingsStore = useSettingsStore()
+</script>
 
 <template>
-    <footer class="Footer">@元気もりもりジャパン</footer>
+    <footer class="Footer">@{{ settingsStore.siteTitle }}</footer>
 </template>
 
 <style lang="scss" scoped>

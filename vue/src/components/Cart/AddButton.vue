@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useCartStore } from '@/stores/cart'
+import { CartItem } from '@/types'
 import Toast from '@/components/Toast.vue'
 import cartIcon from '@/assets/icons/cart.svg'
 
-interface Props {
+const cartStore = useCartStore()
+
+interface Props extends CartItem {
     isDisabled?: boolean
 }
 
@@ -14,10 +18,19 @@ const y = ref(0)
 const buttonRef = ref<HTMLElement | null>(null)
 const isToastShow = ref(false)
 
-const updateCoordinates = (event: MouseEvent) => {
-    if (isToastShow.value) {
+const addCartItem = (event: MouseEvent) => {
+    if (isToastShow.value || cartStore.hasItem(props.id)) {
         return false
     }
+
+    const addItemData: CartItem = {
+        id: props.id,
+        name: props.name,
+        image: props.image,
+        description: props.description,
+    }
+    cartStore.addItem(addItemData)
+
     x.value = event.clientX - 80
     y.value = event.clientY - 60
     isToastShow.value = true
@@ -25,13 +38,13 @@ const updateCoordinates = (event: MouseEvent) => {
 
 onMounted(() => {
     if (buttonRef.value) {
-        buttonRef.value.addEventListener('click', updateCoordinates)
+        buttonRef.value.addEventListener('click', addCartItem)
     }
 })
 
 onUnmounted(() => {
     if (buttonRef.value) {
-        buttonRef.value.removeEventListener('click', updateCoordinates)
+        buttonRef.value.removeEventListener('click', addCartItem)
     }
 })
 </script>
@@ -40,10 +53,21 @@ onUnmounted(() => {
     <div class="AddButton">
         <button
             class="AddButton__button"
-            :class="[{ 'AddButton__button--disabled': isDisabled }]"
+            :class="[
+                {
+                    'AddButton__button--disabled':
+                        isDisabled || cartStore.hasItem(id),
+                },
+            ]"
             ref="buttonRef"
         >
-            <img class="AddButton__icon" :src="cartIcon" alt="" />カートに入れる
+            <img class="AddButton__icon" :src="cartIcon" alt="" />
+            <span class="AddButton__text">
+                <template v-if="!cartStore.hasItem(id)"
+                    >カートに入れる</template
+                >
+                <template v-else>カート追加済み</template>
+            </span>
         </button>
         <Toast
             text="カートに追加しました"
@@ -83,6 +107,7 @@ onUnmounted(() => {
             background-color: #ccc;
             cursor: default;
             pointer-events: none;
+            border-color: #bbb;
         }
     }
 

@@ -1,4 +1,4 @@
-import axiosInstance from '@/axiosConfig'
+import { axiosInstance } from '@/axiosConfig'
 import { Post } from '@/types'
 
 interface FetchPostsOptions {

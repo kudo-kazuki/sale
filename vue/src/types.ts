@@ -60,3 +60,12 @@ export interface BreadcrumbsItem {
 export interface BreadcrumbsItemProps {
     items: BreadcrumbsItem[]
 }
+
+export interface CartItem {
+    id: number | string
+    name?: string
+    image?: string | null
+    description?: string
+    num?: number
+    price?: number
+}
