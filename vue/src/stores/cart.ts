@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { CartItem } from '@/types'
+import { PersistedStateOptions } from 'pinia-plugin-persistedstate'
 
 export const useCartStore = defineStore('cartStore', {
     state: () => ({
@@ -22,4 +23,7 @@ export const useCartStore = defineStore('cartStore', {
             return this.items.some((item) => item.id === id)
         },
     },
+    persist: {
+        enabled: true, // 永続化を有効にする
+    } as PersistedStateOptions,
 })

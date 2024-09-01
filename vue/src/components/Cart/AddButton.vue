@@ -12,6 +12,7 @@ interface Props extends CartItem {
 }
 
 const props = withDefaults(defineProps<Props>(), {})
+console.log('cartStore.items', cartStore.items)
 
 const x = ref(0)
 const y = ref(0)
@@ -30,6 +31,7 @@ const addCartItem = (event: MouseEvent) => {
         description: props.description,
     }
     cartStore.addItem(addItemData)
+    console.log('cartStore.items', cartStore.items)
 
     x.value = event.clientX - 80
     y.value = event.clientY - 60
