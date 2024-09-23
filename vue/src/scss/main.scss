@@ -72,13 +72,57 @@ select {
     border-radius: 4px;
     outline: none;
     font-family: inherit;
+    width: 100%;
 
     &:focus {
         border-color: #007bff;
+    }
+
+    &.error {
+        border-color: #ec2222;
     }
 }
 
 button,
 select {
     cursor: pointer;
+}
+
+.table {
+    width: 100%;
+    border: 1px solid #cfcfcf;
+    margin: 12px 0;
+
+    tbody {
+        text-align: left;
+
+        tr {
+            th,
+            td {
+                border: 1px solid #cfcfcf;
+                padding: 12px 12px;
+                vertical-align: middle;
+            }
+
+            th {
+                background-color: #f8f7f4;
+                font-weight: bold;
+            }
+        }
+    }
+
+    .hissu {
+        background-color: #c11d1d;
+        color: #fff;
+        display: inline-block;
+        margin-left: 8px;
+        padding: 0 4px;
+        font-size: 12px;
+    }
+
+    small {
+        display: block;
+        font-weight: normal;
+        font-size: 12px;
+    }
 }

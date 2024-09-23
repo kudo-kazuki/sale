@@ -29,6 +29,8 @@ const addCartItem = (event: MouseEvent) => {
         name: props.name,
         image: props.image,
         description: props.description,
+        categories: props.categories,
+        tags: props.tags,
     }
     cartStore.addItem(addItemData)
     console.log('cartStore.items', cartStore.items)

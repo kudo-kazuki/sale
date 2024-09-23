@@ -42,7 +42,7 @@ export interface Post {
 }
 
 export interface Category {
-    id: number
+    id: number | string
     count: number
     description: string
     link: string
@@ -68,4 +68,6 @@ export interface CartItem {
     description?: string
     num?: number
     price?: number
+    categories?: Array<number | string>
+    tags?: Array<number | string>
 }

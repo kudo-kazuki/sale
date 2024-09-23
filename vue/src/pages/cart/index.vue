@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { updateMeta } from '@/utils/meta'
-import { CartItem, BreadcrumbsItem } from '@/types'
+import { BreadcrumbsItem } from '@/types'
+import CartItems from '@/components/Cart/CartItems.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import Modal from '@/components/Modal.vue'
+import Button from '@/components/Button.vue'
 
 updateMeta('カート', 'カート')
 
@@ -17,8 +20,95 @@ const breadcrumbsItems = ref<Array<BreadcrumbsItem>>([
 const cartStore = useCartStore()
 console.log('cartStore.items', cartStore.items)
 
-const noImage =
-    'https://placehold.jp/24/cccccc/ffffff/500x400.png?text=No Image'
+const isOpenOrder = ref(false)
+const openOrder = () => {
+    isOpenOrder.value = true
+}
+const closeOrder = () => {
+    isOpenOrder.value = false
+}
+
+const MAX_QUESTION_LENGTH = 5
+const inputData = ref({
+    name: '',
+    email: '',
+    question: '',
+})
+
+const nameErrorText = ref('')
+const validateName = () => {
+    nameErrorText.value = ''
+
+    if (!inputData.value.name) {
+        nameErrorText.value = 'お名前は必須項目です'
+        return
+    }
+}
+
+const emailErrorText = ref('')
+const validateEmail = () => {
+    emailErrorText.value = ''
+
+    if (!inputData.value.email) {
+        emailErrorText.value = 'メールアドレスは必須項目です'
+        return
+    }
+
+    // メールアドレスの正規表現
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailPattern.test(inputData.value.email)) {
+        emailErrorText.value = 'メールアドレスの形式が正しくありません'
+        return
+    }
+}
+
+const clearError = (item: string) => {
+    if (item === 'name') {
+        nameErrorText.value = ''
+    }
+
+    if (item === 'email') {
+        emailErrorText.value = ''
+    }
+}
+
+const isConfirmDisabled = computed(() => {
+    return Boolean(
+        nameErrorText.value ||
+            !inputData.value.name ||
+            emailErrorText.value ||
+            !inputData.value.email ||
+            inputData.value.question.length > MAX_QUESTION_LENGTH,
+    )
+})
+
+const isOpenConfirm = ref(false)
+const openConfirm = () => {
+    if (isConfirmDisabled.value) {
+        return false
+    }
+    closeOrder()
+    isOpenConfirm.value = true
+}
+const closeConfirm = () => {
+    isOpenConfirm.value = false
+}
+
+const isOpenSendError = ref(false)
+const openSendError = () => {
+    isOpenSendError.value = true
+}
+const closeSendError = () => {
+    isOpenSendError.value = false
+}
+
+/**注文処理 */
+const sendOrder = () => {
+    closeConfirm()
+
+    //注文が失敗した場合
+    openSendError()
+}
 </script>
 
 <template>
@@ -28,24 +118,265 @@ const noImage =
             :items="breadcrumbsItems"
         />
         <h1>カート</h1>
-        <template v-if="cartStore.items.length">
-            <ul class="">
-                <li v-for="item in cartStore.items" :key="item.id">
-                    <div>
-                        <img :src="item.image ? item.image : noImage" alt="" />
-                    </div>
-                    <div>
-                        {{ item.name }}
-                    </div>
-                </li>
-            </ul>
-        </template>
-        <div v-else>カートには何も入っていません</div>
+        <div class="Page__wrap">
+            <div class="Page__itemsWrap">
+                <CartItems :items="cartStore.items" />
+            </div>
+            <div v-if="cartStore.items.length" class="Page__order">
+                <button class="Page__orderButton" @click="openOrder()">
+                    この内容で注文する
+                </button>
+            </div>
+        </div>
+
+        <Modal :isShow="isOpenOrder" title="注文" size="l" @close="closeOrder">
+            <template #body>
+                <p>必要な情報をご入力ください。</p>
+                <table class="table">
+                    <colgroup>
+                        <col width="30%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>
+                                <label for="name"
+                                    >お名前<span class="hissu"
+                                        >必須</span
+                                    ></label
+                                >
+                            </th>
+                            <td>
+                                <input
+                                    id="name"
+                                    :class="{ error: nameErrorText }"
+                                    type="text"
+                                    v-model="inputData.name"
+                                    @focus="clearError('name')"
+                                    @blur="validateName()"
+                                />
+                                <p v-if="nameErrorText" class="Page__errorText">
+                                    {{ nameErrorText }}
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="email"
+                                    >メールアドレス<span class="hissu"
+                                        >必須</span
+                                    ></label
+                                >
+                            </th>
+                            <td>
+                                <input
+                                    id="email"
+                                    :class="{ error: emailErrorText }"
+                                    type="email"
+                                    v-model="inputData.email"
+                                    @focus="clearError('email')"
+                                    @blur="validateEmail()"
+                                />
+                                <p
+                                    v-if="emailErrorText"
+                                    class="Page__errorText"
+                                >
+                                    {{ emailErrorText }}
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <label for="qustion">ご質問等</label
+                                ><small
+                                    >※{{ MAX_QUESTION_LENGTH }}文字以内</small
+                                >
+                            </th>
+                            <td>
+                                <textarea
+                                    id="qustion"
+                                    class="Page__qustion"
+                                    :class="{
+                                        error:
+                                            inputData.question.length >
+                                            MAX_QUESTION_LENGTH,
+                                    }"
+                                    v-model="inputData.question"
+                                ></textarea>
+                                <p
+                                    v-if="
+                                        inputData.question.length >
+                                        MAX_QUESTION_LENGTH
+                                    "
+                                    class="Page__errorText"
+                                >
+                                    {{ MAX_QUESTION_LENGTH }}文字を超えています
+                                </p>
+                                <small class=""
+                                    >{{ inputData.question.length }}/{{
+                                        MAX_QUESTION_LENGTH
+                                    }}文字</small
+                                >
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </template>
+            <template #footer>
+                <div class="Page__modalButtons">
+                    <Button
+                        class="Page__modalButton"
+                        text="キャンセル"
+                        color="gray"
+                        @click="closeOrder()"
+                    />
+                    <Button
+                        class="Page__modalButton"
+                        text="確認"
+                        color="blue"
+                        :isDisabled="isConfirmDisabled"
+                        @click="openConfirm()"
+                    />
+                </div>
+            </template>
+        </Modal>
+
+        <Modal
+            :isShow="isOpenConfirm"
+            title="注文確認"
+            size="l"
+            @close="closeConfirm"
+        >
+            <template #body>
+                <p>よろしければ注文してください。</p>
+                <table class="table">
+                    <colgroup>
+                        <col width="30%" />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>お名前</th>
+                            <td>{{ inputData.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>メールアドレス</th>
+                            <td>{{ inputData.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>ご質問等</th>
+                            <td>
+                                <pre>{{ inputData.question }}</pre>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <CartItems :items="cartStore.items" isNotDeleteButton />
+            </template>
+            <template #footer>
+                <div class="Page__modalButtons">
+                    <Button
+                        class="Page__modalButton"
+                        text="キャンセル"
+                        color="gray"
+                        @click="closeConfirm()"
+                    />
+                    <Button
+                        class="Page__modalButton"
+                        text="注文する"
+                        color="blue"
+                        @click="sendOrder()"
+                    />
+                </div>
+            </template>
+        </Modal>
+
+        <Modal
+            :isShow="isOpenSendError"
+            title="注文エラー"
+            size="l"
+            @close="closeSendError"
+        >
+            <template #body>
+                <p>
+                    何らかの理由で注文ができませんでした。<br />恐れ入りますが少し時間をおいてから再度お試しください。
+                </p>
+            </template>
+        </Modal>
     </section>
 </template>
 
 <style lang="scss" scoped>
 .Page {
     @include page;
+
+    &__wrap {
+        position: relative;
+        display: flex;
+        column-gap: 40px;
+    }
+
+    &__itemsWrap {
+        width: 100%;
+    }
+
+    &__order {
+        position: sticky;
+        top: 0;
+        right: 0;
+        width: 400px;
+        text-align: center;
+        padding-top: 24px;
+    }
+
+    &__orderButton {
+        position: sticky;
+        top: 0;
+        right: 0;
+        border: 1px solid #fb9a13;
+        width: 100%;
+        border-radius: 10px;
+        background-color: #fbcf28;
+        box-shadow: inset 0 0 4px 0 rgba(0, 0, 0, 0.1);
+        font-size: 18px;
+        padding: 12px 0;
+
+        &:hover {
+            background-color: #ffd439;
+        }
+    }
+
+    &__qustion {
+        height: 150px;
+    }
+
+    &__errorText {
+        font-size: 14px;
+        margin: 2px 0;
+        color: #ec2222;
+    }
+
+    &__modalButtons {
+        display: flex;
+        column-gap: 12px;
+    }
+
+    & &__modalButton {
+        width: 120px;
+    }
+
+    @media (max-width: 900px) {
+        &__wrap {
+            flex-direction: column-reverse;
+            row-gap: 24px;
+        }
+
+        &__itemsWrap {
+            padding: 0 10px;
+        }
+
+        &__order {
+            width: 100%;
+            padding: 0;
+        }
+    }
 }
 </style>

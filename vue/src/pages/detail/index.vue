@@ -109,6 +109,8 @@ watch(
                         ? post.featured_media_details.source_url
                         : null
                 "
+                :categories="post.categories ?? []"
+                :tags="post.tags ?? []"
             />
         </section>
         <Loading v-if="isLoading" class="Detail__loading" />
@@ -123,7 +125,7 @@ watch(
     overflow: auto;
 
     &__section {
-        width: $contentWidth;
+        width: 100%;
         margin: 0 auto;
         padding-bottom: 40px;
     }
