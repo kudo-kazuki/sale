@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { updateMeta } from '@/utils/meta'
 import { BreadcrumbsItem } from '@/types'
@@ -8,6 +8,8 @@ import CartItems from '@/components/Cart/CartItems.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Modal from '@/components/Modal.vue'
 import Button from '@/components/Button.vue'
+
+const router = useRouter()
 
 updateMeta('カート', 'カート')
 
@@ -105,6 +107,12 @@ const closeSendError = () => {
 /**注文処理 */
 const sendOrder = () => {
     closeConfirm()
+
+    //TODO:注文送信API叩く
+
+    //注文が成功した場合
+    //TODO:cart内のデータを全て消す処理
+    router.push('/cart/complete')
 
     //注文が失敗した場合
     openSendError()
