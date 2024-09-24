@@ -2,13 +2,18 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { useCsrfStore } from '@/stores/csrfStore'
 import { updateMeta } from '@/utils/meta'
 import { BreadcrumbsItem } from '@/types'
+import axios from 'axios'
+import { format } from 'date-fns'
+import { API_BASE_URL, ENVIROMENT_NAME } from '@/config'
 import CartItems from '@/components/Cart/CartItems.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Modal from '@/components/Modal.vue'
 import Button from '@/components/Button.vue'
 
+const csrfStore = useCsrfStore()
 const router = useRouter()
 
 updateMeta('カート', 'カート')
@@ -30,10 +35,10 @@ const closeOrder = () => {
     isOpenOrder.value = false
 }
 
-const MAX_QUESTION_LENGTH = 5
+const MAX_QUESTION_LENGTH = 500
 const inputData = ref({
-    name: '',
-    email: '',
+    name: 'aaaa',
+    email: 'aaa@aa.jp',
     question: '',
 })
 
@@ -102,20 +107,105 @@ const openSendError = () => {
 }
 const closeSendError = () => {
     isOpenSendError.value = false
+    location.reload()
 }
 
 /**注文処理 */
-const sendOrder = () => {
-    closeConfirm()
+const sendOrder = async () => {
+    try {
+        closeConfirm()
 
-    //TODO:注文送信API叩く
+        const orderNo = format(new Date(), 'yyyyMMddHHmm')
 
-    //注文が成功した場合
-    //TODO:cart内のデータを全て消す処理
-    router.push('/cart/complete')
+        let orderItemsText = ''
+        cartStore.items.forEach((item) => {
+            orderItemsText += item.name + '\n'
+        })
 
-    //注文が失敗した場合
-    openSendError()
+        const toOrnerSubject = `注文番号：${orderNo}`
+        const toOrnerHeaders = `From: ${inputData.value.email}`
+        const toOrnerBody = `サイトから注文が来ました。
+
+─ご注文内容の確認─────────────────
+受付番号：${orderNo}
+
+ご注文商品：
+${orderItemsText}
+
+[ お名前 ] ${inputData.value.name}
+[ メールアドレス ] ${inputData.value.email}
+[ ご質問等 ] 
+${inputData.value.question}
+
+──────────────────────────`
+
+        const toCustomerSubject = `[${orderNo}]ご注文ありがとうございます`
+        const toCustomerHeaders = `From: ${inputData.value.email}`
+        const toCustomerBody = `${inputData.value.name} 様
+──────────────────────────
+
+ご注文を承りました。
+後程ご連絡させていただきますので今しばらくお待ちください。
+
+─ご注文内容の確認─────────────────
+受付番号：${orderNo}
+
+ご注文商品：
+${orderItemsText}
+
+[ お名前 ] ${inputData.value.name}
+[ メールアドレス ] ${inputData.value.email}
+[ ご質問等 ] 
+${inputData.value.question}
+
+──────────────────────────`
+
+        const postData = {
+            orderItems: cartStore.items,
+            orderNo: orderNo,
+            email: inputData.value.email,
+            name: inputData.value.name,
+            question: inputData.value.question,
+            toOrner: {
+                subject: toOrnerSubject,
+                headers: toOrnerHeaders,
+                body: toOrnerBody,
+            },
+            toCustomer: {
+                subject: toCustomerSubject,
+                headers: toCustomerHeaders,
+                body: toCustomerBody,
+            },
+            csrf_token: csrfStore.csrfToken,
+            enviroment: ENVIROMENT_NAME,
+        }
+        console.log('postData:', postData)
+
+        //注文送信API叩く
+        const response = await axios.post(
+            `${API_BASE_URL}/send.php`,
+            postData,
+            {
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+            },
+        )
+        console.log('response:', response)
+
+        // サーバーからのレスポンスに応じて処理を分岐
+        if (response.status === 200 && response.data.result) {
+            //注文が成功した場合
+            //TODO:cart内のデータを全て消す処理
+            location.href = '/cart/complete'
+        } else {
+            // 通信エラーや予期しないエラーが発生した場合
+            openSendError()
+        }
+    } catch (error) {
+        console.error('注文処理中にエラーが発生しました:', error)
+        openSendError()
+    }
 }
 </script>
 

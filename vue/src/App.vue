@@ -5,6 +5,9 @@ import { useSettingsStore } from '@/stores/settings'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import { axiosInstance2 } from '@/axiosConfig'
+import { useCsrfStore } from '@/stores/csrfStore'
+
+const csrfStore = useCsrfStore()
 
 const categoryStore = useCategoryStore()
 categoryStore.fetchCategories()
@@ -15,6 +18,10 @@ const setAppHeight = () => {
         appRef.value.style.height = `${window.innerHeight}px`
     }
 }
+
+onMounted(async () => {
+    await csrfStore.fetchCsrfToken() // アプリケーションの初期化時にCSRFトークンを取得
+})
 onMounted(() => {
     setAppHeight()
     window.addEventListener('resize', setAppHeight)

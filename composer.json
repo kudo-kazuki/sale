@@ -1,0 +1,5 @@
+{
+    "require": {
+        "volnix/csrf": "^1.2"
+    }
+}
