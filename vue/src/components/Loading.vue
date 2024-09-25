@@ -1,19 +1,34 @@
 <script setup lang="ts">
 interface Props {
     text?: string
+    isOverlay?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {})
 </script>
 
 <template>
-    <div class="Loading">
+    <div class="Loading" :class="{ 'Loading--overlay': isOverlay }">
         <div class="Loading__loader"></div>
+        <span v-if="text" class="Loading__text">{{ text }}</span>
     </div>
 </template>
 
 <style lang="scss" scoped>
 .Loading {
+    &--overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999999;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
     &__loader {
         width: 50px;
         padding: 8px;
@@ -32,6 +47,19 @@ const props = withDefaults(defineProps<Props>(), {})
         to {
             transform: rotate(1turn);
         }
+    }
+
+    &__text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: bold;
+        text-shadow:
+            1px 1px 1px #fff,
+            -1px -1px 1px #fff;
+        font-size: 24px;
+        z-index: 999999;
     }
 }
 </style>

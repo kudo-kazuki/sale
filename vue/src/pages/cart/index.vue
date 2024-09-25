@@ -12,6 +12,7 @@ import CartItems from '@/components/Cart/CartItems.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Modal from '@/components/Modal.vue'
 import Button from '@/components/Button.vue'
+import Loading from '@/components/Loading.vue'
 
 const csrfStore = useCsrfStore()
 const router = useRouter()
@@ -37,8 +38,8 @@ const closeOrder = () => {
 
 const MAX_QUESTION_LENGTH = 500
 const inputData = ref({
-    name: 'aaaa',
-    email: 'aaa@aa.jp',
+    name: '',
+    email: '',
     question: '',
 })
 
@@ -110,9 +111,17 @@ const closeSendError = () => {
     location.reload()
 }
 
+const isLoading = ref(false)
+
 /**注文処理 */
 const sendOrder = async () => {
+    if (isLoading.value) {
+        return false
+    }
+
     try {
+        isLoading.value = true
+
         closeConfirm()
 
         const orderNo = format(new Date(), 'yyyyMMddHHmm')
@@ -196,15 +205,17 @@ ${inputData.value.question}
         // サーバーからのレスポンスに応じて処理を分岐
         if (response.status === 200 && response.data.result) {
             //注文が成功した場合
-            //TODO:cart内のデータを全て消す処理
-            // location.href = '/cart/complete'
+            cartStore.deleteAllItem() //カートの中身を空にする
+            location.href = '/cart/complete'
         } else {
             // 通信エラーや予期しないエラーが発生した場合
             openSendError()
+            isLoading.value = false
         }
     } catch (error) {
         console.error('注文処理中にエラーが発生しました:', error)
         openSendError()
+        isLoading.value = false
     }
 }
 </script>
@@ -399,6 +410,8 @@ ${inputData.value.question}
                 </p>
             </template>
         </Modal>
+
+        <Loading v-if="isLoading" text="送信中" isOverlay />
     </section>
 </template>
 

@@ -20,11 +20,13 @@ export const useCsrfStore = defineStore('csrf', {
     actions: {
         async fetchCsrfToken() {
             try {
+                this.resetCsrfToken()
                 const response = await axios.get(
                     `${API_BASE_URL}/csrf-token.php`,
                 )
                 this.csrfToken.name = response.data.csrf_token.name
                 this.csrfToken.value = response.data.csrf_token.value
+                console.log('csrfToken', this.csrfToken)
             } catch (error) {
                 console.error('CSRFトークンの取得に失敗しました:', error)
             }
