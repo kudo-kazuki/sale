@@ -33,5 +33,7 @@ const breadcrumbsItems = ref<Array<BreadcrumbsItem>>([
 <style lang="scss" scoped>
 .Page {
     @include page;
+
+    height: auto;
 }
 </style>

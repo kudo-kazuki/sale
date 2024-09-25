@@ -2,13 +2,14 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchPostById } from '@/utils/fetchPosts'
-import { Post, BreadcrumbsItem } from '@/types'
+import { Post, BreadcrumbsItem, Category } from '@/types'
 import { updateMeta } from '@/utils/meta'
 import { formatDate } from '@/utils/dateFormatter'
 import { useCategoryStore } from '@/stores/categories'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Loading from '@/components/Loading.vue'
 import AddButton from '@/components/Cart/AddButton.vue'
+import CircleLinkItem from '@/components/CircleLinkItem.vue'
 
 const categoryStore = useCategoryStore()
 
@@ -16,8 +17,21 @@ const route = useRoute()
 const post = ref<Post | null>(null)
 const isLoading = ref(true)
 const breadcrumbsItems = ref<Array<BreadcrumbsItem>>([])
+const categoryDetails = ref<Array<Category>>([])
 
 const postId = route.params.id as string
+
+const setCategoryDetails = async () => {
+    if (post.value && post.value.categories && post.value.categories?.length) {
+        try {
+            categoryDetails.value = await categoryStore.getCategoryByIds(
+                post.value.categories,
+            )
+        } catch (error) {
+            console.error('Error fetching categories:', error)
+        }
+    }
+}
 
 const fetchPost = async (postId: string) => {
     try {
@@ -53,6 +67,8 @@ const fetchPost = async (postId: string) => {
             text: post.value.title.rendered,
         })
 
+        setCategoryDetails()
+
         isLoading.value = false
     } catch (error) {
         console.error('Error fetching post:', error)
@@ -79,6 +95,16 @@ watch(
                 :items="breadcrumbsItems"
             />
             <h1 class="Detail__h1">{{ post ? post.title.rendered : '' }}</h1>
+
+            <ul v-if="categoryDetails.length" class="Detail__categories">
+                <li v-for="item in categoryDetails" :key="item.id">
+                    <CircleLinkItem
+                        :text="item.name"
+                        :href="`/category/${item.id}`"
+                    />
+                </li>
+            </ul>
+
             <p v-if="post && post.date" class="Detail__date">
                 <time>{{ post ? formatDate(post.date) : '不明' }}</time>
             </p>
@@ -121,7 +147,7 @@ watch(
 .Detail {
     @include page;
 
-    height: 100%;
+    height: auto;
     overflow: auto;
 
     &__section {
@@ -158,6 +184,13 @@ watch(
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    &__categories {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 8px;
+        column-gap: 12px;
     }
 
     :deep(figure img) {

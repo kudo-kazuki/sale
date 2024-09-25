@@ -38,7 +38,7 @@ watch(
             categoryDetails.value = []
         }
     },
-    { immediate: true }, // 初回の実行を強制するオプション
+    { immediate: true },
 )
 
 // コンポーネントがマウントされたときにカテゴリ情報を取得する

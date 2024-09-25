@@ -406,6 +406,8 @@ ${inputData.value.question}
 .Page {
     @include page;
 
+    height: auto;
+
     &__wrap {
         position: relative;
         display: flex;

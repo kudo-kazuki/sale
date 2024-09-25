@@ -77,5 +77,7 @@ const movePage = (pageNumber: number) => {
 <style lang="scss" scoped>
 .Page {
     @include page;
+
+    height: auto;
 }
 </style>

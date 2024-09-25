@@ -32,7 +32,7 @@ onMounted(() => {
 
 <template>
     <div class="Page">
-        <h1>index</h1>
+        <h1>TOP</h1>
         <Posts :posts="posts" :isLoading="isLoading" />
     </div>
 </template>
@@ -40,5 +40,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 .Page {
     @include page;
+
+    height: auto;
 }
 </style>
