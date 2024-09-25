@@ -160,7 +160,7 @@ ${inputData.value.question}
 
 ──────────────────────────`
 
-        const postData = {
+        const postData: Record<string, any> = {
             orderItems: cartStore.items,
             orderNo: orderNo,
             email: inputData.value.email,
@@ -176,9 +176,9 @@ ${inputData.value.question}
                 headers: toCustomerHeaders,
                 body: toCustomerBody,
             },
-            csrf_token: csrfStore.csrfToken,
             enviroment: ENVIROMENT_NAME,
         }
+        postData[csrfStore.csrfToken.name] = csrfStore.csrfToken.value
         console.log('postData:', postData)
 
         //注文送信API叩く
@@ -197,7 +197,7 @@ ${inputData.value.question}
         if (response.status === 200 && response.data.result) {
             //注文が成功した場合
             //TODO:cart内のデータを全て消す処理
-            location.href = '/cart/complete'
+            // location.href = '/cart/complete'
         } else {
             // 通信エラーや予期しないエラーが発生した場合
             openSendError()

@@ -12,13 +12,6 @@ $postData = file_get_contents('php://input');
 $postDataArray = json_decode($postData, true);
 
 if($postDataArray['enviroment'] != 'local'){
-    // CSRFトークンがPOSTデータに含まれているか確認
-    if (!isset($postDataArray['csrf_token'])) {
-        http_response_code(400);
-        echo json_encode(['error' => 'CSRF token is missing', 'result' => false]);
-        exit;
-    }
-
     // CSRFトークンを検証
     if (!CSRF::validate($postDataArray)) {
         // トークンが無効な場合、403 Forbiddenを返す
