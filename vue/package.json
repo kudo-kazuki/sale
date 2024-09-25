@@ -6,6 +6,8 @@
     "scripts": {
         "dev": "vite --host",
         "build": "vue-tsc -b && vite build --mode production",
+        "devbuild": "vue-tsc -b && vite build --mode develop",
+        "localtestbuild": "vue-tsc -b && vite build --mode localtest",
         "preview": "vite preview"
     },
     "dependencies": {

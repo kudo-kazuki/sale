@@ -13,7 +13,7 @@ export default defineConfig({
             extensions: ['vue'], // 対応するファイル拡張子を指定
         }),
     ],
-    base: './',
+    base: '/wp/wp-content/themes/mytheme/',
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'), // '@'を'src'ディレクトリにマッピング
@@ -38,5 +38,8 @@ export default defineConfig({
                 `,
             },
         },
+    },
+    build: {
+        outDir: '../wp/wp-content/themes/mytheme',
     },
 })
