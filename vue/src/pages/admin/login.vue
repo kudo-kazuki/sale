@@ -12,8 +12,12 @@ const authStore = useAuthStore()
 const handleLogin = async () => {
     try {
         await authStore.login(username.value, password.value)
-    } catch (error) {
-        errorMessage.value = 'ログインに失敗しました。'
+    } catch (error: any) {
+        if (error) {
+            errorMessage.value = error
+        } else {
+            errorMessage.value = 'ログインに失敗しました。'
+        }
     }
 }
 </script>

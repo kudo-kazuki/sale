@@ -1,12 +1,47 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import Button from '@/components/Button.vue'
+
+const authStore = useAuthStore()
+
+const errorMessage = ref('')
+
+const logout = async () => {
+    try {
+        await authStore.logout()
+    } catch (error) {
+        errorMessage.value = 'ログアウトに失敗しました。'
+    }
+}
+</script>
 
 <template>
-    <div>
+    <section class="Page">
         <h1>管理ページ</h1>
-        <p>ようこそ、管理者さん</p>
+        <p>ようこそ、管理者さん。</p>
+
+        <Button
+            @click.orevent="logout()"
+            class="Page__logoutButton"
+            text="ログアウト"
+            size="m"
+            color="blue"
+        />
+
         <ul>
-            <li><router-link to="/admin/order_index">注文一覧</router-link></li>
-            <!-- 他の管理ページへのリンクもここに追加 -->
+            <li><router-link to="/admin/orders">注文一覧</router-link></li>
         </ul>
-    </div>
+    </section>
 </template>
+
+<style lang="scss" scoped>
+.Page {
+    @include page;
+
+    & &__logoutButton {
+        display: block;
+        margin: 12px auto;
+    }
+}
+</style>

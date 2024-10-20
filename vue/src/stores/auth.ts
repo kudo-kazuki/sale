@@ -11,11 +11,16 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         async login(username: string, password: string) {
             try {
-                console.log('API_BASE_URL', API_BASE_URL)
-                const response = await axios.post(`${API_BASE_URL}/api/login`, {
-                    username,
-                    password,
-                })
+                const response = await axios.post(
+                    `${API_BASE_URL}/api/login.php`,
+                    {
+                        username,
+                        password,
+                        headers: {
+                            'Content-Type': 'text/plain',
+                        },
+                    },
+                )
                 this.token = response.data.token
                 this.isAuthenticated = true
 
@@ -25,10 +30,21 @@ export const useAuthStore = defineStore('auth', {
                 }
 
                 // 認証成功後、/admin/indexにリダイレクト
-                router.push('/admin/index')
-            } catch (error) {
-                console.error('ログイン失敗:', error)
-                throw new Error('ログインに失敗しました')
+                router.push('/admin/')
+            } catch (error: any) {
+                console.log(error)
+
+                // サーバーからのエラーメッセージをそのまま投げる
+                if (
+                    error.response &&
+                    error.response.data &&
+                    error.response.data.message
+                ) {
+                    throw new Error(error.response.data.message)
+                } else {
+                    // エラーメッセージが無い場合のデフォルトエラーメッセージ
+                    throw new Error('ログインに失敗しました')
+                }
             }
         },
         logout() {
