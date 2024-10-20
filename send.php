@@ -39,26 +39,34 @@ if(
 $order_confirm_mail = 'kuasehujikolp@yahoo.co.jp';
 mb_language('ja');
 mb_internal_encoding('utf-8');
-mb_send_mail(
-    $order_confirm_mail, 
-    $postDataArray['toOrner']['subject'], 
-    $postDataArray['toOrner']['body'], 
-    $postDataArray['toOrner']['headers']
-);
 
+if($postDataArray['enviroment'] != 'local'){
+    mb_send_mail(
+        $order_confirm_mail, 
+        $postDataArray['toOrner']['subject'], 
+        $postDataArray['toOrner']['body'], 
+        $postDataArray['toOrner']['headers']
+    );
+}
 
 /*--------------------------------------------------------*/
 /*------------------注文者に送るメール------------------------*/
-mb_send_mail(
-    $postDataArray['email'], 
-    $postDataArray['toCustomer']['subject'], 
-    $postDataArray['toCustomer']['body'], 
-    $postDataArray['toCustomer']['headers']
-);
+if($postDataArray['enviroment'] != 'local'){
+    mb_send_mail(
+        $postDataArray['email'], 
+        $postDataArray['toCustomer']['subject'], 
+        $postDataArray['toCustomer']['body'], 
+        $postDataArray['toCustomer']['headers']
+    );
+}
 
-
-//TODO:DBに保存
+// DBに注文情報を保存
+require 'order_save.php';
+$orderId = saveOrder($postDataArray); // order_save.phpのsaveOrder関数を呼び出し、注文を保存
 
 // 処理が成功した場合のレスポンス
 header('Content-Type: application/json');
-echo json_encode(['result' => true]);
+echo json_encode([
+    'result' => true,
+    'orderId' => $orderId // 保存した注文のIDを返す
+]);
