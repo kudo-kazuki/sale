@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: null as string | null,
         isAuthenticated: false,
+        username: null as string | null, // ユーザー名
     }),
     actions: {
         async login(username: string, password: string) {
@@ -23,10 +24,12 @@ export const useAuthStore = defineStore('auth', {
                 )
                 this.token = response.data.token
                 this.isAuthenticated = true
+                this.username = username // ユーザー名を保存
 
                 // JWTをlocalStorageに保存
                 if (this.token) {
                     localStorage.setItem('jwt_token', this.token)
+                    localStorage.setItem('username', this.username) // ユーザー名も保存
                 }
 
                 // 認証成功後、/admin/indexにリダイレクト
@@ -50,14 +53,18 @@ export const useAuthStore = defineStore('auth', {
         logout() {
             this.token = null
             this.isAuthenticated = false
+            this.username = null // ユーザー名をリセット
             localStorage.removeItem('jwt_token')
+            localStorage.removeItem('username') // ユーザー名も削除
             router.push('/admin/login')
         },
         checkAuth() {
             const token = localStorage.getItem('jwt_token')
+            const storedUsername = localStorage.getItem('username') // 保存されたユーザー名を取得
             if (token) {
                 this.token = token
                 this.isAuthenticated = true
+                this.username = storedUsername // ユーザー名を再設定
             } else {
                 this.isAuthenticated = false
             }

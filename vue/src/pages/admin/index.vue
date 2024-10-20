@@ -19,7 +19,7 @@ const logout = async () => {
 <template>
     <section class="Page">
         <h1>管理ページ</h1>
-        <p>ようこそ、管理者さん。</p>
+        <p>ようこそ、{{ authStore.username }}さん。</p>
 
         <Button
             @click.orevent="logout()"
