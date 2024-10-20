@@ -6,7 +6,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Dotenv\Dotenv;
 
 // サーバーのホスト名に応じて環境を設定
-if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
+if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1' || $_SERVER['SERVER_NAME'] === 'sale') {
     putenv('APP_ENV=local');
 } else if ($_SERVER['SERVER_NAME'] === 'test.xxxx') {
     putenv('APP_ENV=develop');

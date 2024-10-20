@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'e65dcfd17992635768455afff87ae14cd8e6a2dd',
+    'reference' => '37b0f36dc28eb39c2854bc1c71053fd492e91f59',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'e65dcfd17992635768455afff87ae14cd8e6a2dd',
+      'reference' => '37b0f36dc28eb39c2854bc1c71053fd492e91f59',
     ),
     'brick/math' => 
     array (
@@ -46,6 +46,15 @@
       array (
       ),
       'reference' => '5817d0659c5b50c9b950feb9af7b9668e2c436bc',
+    ),
+    'firebase/php-jwt' => 
+    array (
+      'pretty_version' => 'v6.10.1',
+      'version' => '6.10.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '500501c2ce893c824c801da135d02661199f60c5',
     ),
     'graham-campbell/result-type' => 
     array (
